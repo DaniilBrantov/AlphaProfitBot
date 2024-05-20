@@ -40,7 +40,14 @@ def send_message_with_buttons(chat_id, data_key, name=""):
 @bot.message_handler(commands=["start"])
 def start_handler(message):
     name = message.from_user.first_name
+    user_id = message.from_user.id
     send_message_with_buttons(message.chat.id, "start_message", name=name)
+    notify_admins(user_id, name)
+
+# Уведомление администраторов о новом пользователе
+def notify_admins(user_id, name):
+    for admin_id in config["admin_ids"]:
+        bot.send_message(admin_id, f"Новый пользователь начал взаимодействие с ботом:\nИмя: {name}\nID: {user_id}")
 
 # Обработка нажатий на кнопки
 @bot.callback_query_handler(func=lambda call: True)
